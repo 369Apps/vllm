@@ -18,19 +18,27 @@ vLLM supports basic model inferencing and serving on x86 CPU platform, with data
 --8<-- [end:set-up-using-python]
 --8<-- [start:pre-built-wheels]
 
-Pre-built vLLM wheels for x86 with AVX512/AVX2 are available since version 0.17.0. To install release wheels:
+Pre-built vLLM wheels for x86 with AVX512/AVX2 are available since version 0.17.0.
+
+x86 wheels depend on `triton==3.8.0+cpu`. That build is not on PyPI. `--find-links` below is the triton-cpu release that publishes it. The dependency is a version pin, so an offline index that already hosts the wheel does not need GitHub.
+
+To install release wheels:
 
 ```bash
 export VLLM_VERSION=$(curl -s https://api.github.com/repos/vllm-project/vllm/releases/latest | jq -r .tag_name | sed 's/^v//')
 
 # use uv
-uv pip install "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_34_x86_64.whl" --torch-backend cpu
+uv pip install "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_34_x86_64.whl" \
+    --find-links https://github.com/triton-lang/triton-cpu/releases/expanded_assets/v3.8.0 \
+    --torch-backend cpu
 ```
 
 ??? console "pip"
     ```bash
     # use pip
-    pip install "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_34_x86_64.whl" --extra-index-url https://download.pytorch.org/whl/cpu
+    pip install "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_34_x86_64.whl" \
+        --find-links https://github.com/triton-lang/triton-cpu/releases/expanded_assets/v3.8.0 \
+        --extra-index-url https://download.pytorch.org/whl/cpu
     ```
 !!! warning "set `LD_PRELOAD`"
     Before use vLLM CPU installed via wheels, make sure Intel OpenMP is added to `LD_PRELOAD`:
@@ -48,7 +56,11 @@ uv pip install "https://github.com/vllm-project/vllm/releases/download/v${VLLM_V
 To install the wheel built from the latest main branch:
 
 ```bash
-uv pip install vllm --extra-index-url https://wheels.vllm.ai/nightly/cpu --index-strategy first-index --torch-backend cpu
+uv pip install vllm \
+    --extra-index-url https://wheels.vllm.ai/nightly/cpu \
+    --find-links https://github.com/triton-lang/triton-cpu/releases/expanded_assets/v3.8.0 \
+    --index-strategy first-index \
+    --torch-backend cpu
 ```
 
 #### Install specific revisions
@@ -57,7 +69,11 @@ If you want to access the wheels for previous commits (e.g. to bisect the behavi
 
 ```bash
 export VLLM_COMMIT=730bd35378bf2a5b56b6d3a45be28b3092d26519 # use full commit hash from the main branch
-uv pip install vllm --extra-index-url https://wheels.vllm.ai/${VLLM_COMMIT}/cpu --index-strategy first-index --torch-backend cpu
+uv pip install vllm \
+    --extra-index-url https://wheels.vllm.ai/${VLLM_COMMIT}/cpu \
+    --find-links https://github.com/triton-lang/triton-cpu/releases/expanded_assets/v3.8.0 \
+    --index-strategy first-index \
+    --torch-backend cpu
 ```
 
 --8<-- [end:pre-built-wheels]

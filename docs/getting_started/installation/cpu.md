@@ -238,7 +238,11 @@ On an AMD Zen 4 / Zen 5 CPU, install the CPU wheel with the `zen` extra so vLLM 
 
 ```bash
 export VLLM_VERSION=$(curl -s https://api.github.com/repos/vllm-project/vllm/releases/latest | jq -r .tag_name | sed 's/^v//')
-uv pip install "vllm[zen]" --extra-index-url https://wheels.vllm.ai/${VLLM_VERSION}/cpu --index-strategy first-index --torch-backend cpu
+uv pip install "vllm[zen]" \
+    --extra-index-url https://wheels.vllm.ai/${VLLM_VERSION}/cpu \
+    --find-links https://github.com/triton-lang/triton-cpu/releases/expanded_assets/v3.8.0 \
+    --index-strategy first-index \
+    --torch-backend cpu
 ```
 
 !!! warning
